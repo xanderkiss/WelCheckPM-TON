@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500&amp;display=swap" rel="stylesheet">
+    <title>รายงานคุณภาพอากาศ</title>
+    <style>
+        body {
+            font-family: 'Bai Jamjuree', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 450px;
+            margin: 20px auto;
+        }
+        .btn-health-check {
+            display: block;
+            width: 100%;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-health-check:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container border rounded shadow">
+        <header>
+            <div class="row rounded-top" style="background-color: #eee;">
+                <div class="col-7">
+                    <h3 class="fs-4 mt-2">รายงานคุณภาพอากาศ</h3>
+                </div>
+                <div class="col-2"><img src="" id="aqi-icon" alt="" width="50"></div>
+                <div class="col-3">
+                    <h2 id="aqi-value" class="mt-1"></h2>
+                </div>
+            </div>
+        </header>
+        <section>
+            <div class="row justify-content-start rounded-top rounded-4 p-2" id="pm-widget" style="background-color: rgb(0, 166, 81);">
+                <div class="col-3 text-center">
+                    <img src="https://xanderkiss.github.io/TSM-Blood-Pressure-Checker-TON/logo.png" width="65" alt="green" id="aqi-image" class="bg-white rounded-circle p-1 mt-2">
+                </div>
+                <div class="col-3 text-center">
+                    <h2 id="pm-aqi" class="fw-semibold fs-1 text-white">50</h2>
+                    <h3 class="fs-5 text-white">AQI</h3>
+                </div>
+                <div class="col text-center">
+                    <p id="pm-text" class="text-white">คุณภาพอากาศดี</p>
+                    <span class="badge text-bg-light fs-6" id="pm-level">PM 2.5 | 25 µg/m³</span>
+                </div>
+            </div>
+        </section>
+    </div>
+    <button class="btn-health-check" onclick="window.location.href='https://xanderkiss.github.io/TON-Num/'">รายการตรวจสุขภาพ</button>
+
+    <script>
+        const aqiUrl = 'https://www.cmuccdc.org/api/ccdc/value/5030';
+        const apiaqiKey = 'b059a926-63b8-4527-8ef6-17af89a3399a';
+        const aqicity = 'Mae Sot';
+
+        fetch(`https://api.airvisual.com/v2/city?city=${aqicity}&state=tak&country=thailand&key=${apiaqiKey}`)
+            .then(response => response.json())
+            .then(data => {
+                const aqiTemp = data.data.current.weather.tp;
+                const aqiTempIcon = data.data.current.weather.ic;
+                document.getElementById('aqi-icon').src = `https://www.airvisual.com/images/${aqiTempIcon}.png`;
+                document.getElementById('aqi-value').textContent = `${aqiTemp} °C`;
+            })
+            .catch(error => console.error(error));
+
+        fetch(aqiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const pm25 = data.pm25;
+                const aqi = calculateAQI(data.pm25);
+                const rgb = data.th_color.split(",");
+                document.getElementById("pm-level").textContent = `PM 2.5 | ${pm25} µg/m³`;
+                document.getElementById("pm-aqi").textContent = `${aqi}`;
+                document.getElementById("pm-text").textContent = `${data.th_title}`;
+                document.getElementById("pm-widget").style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+            })
+            .catch(error => console.error(error));
+
+        function calculateAQI(Ci) {
+            let ranges = [
+                { min: 0, max: 15, aqiMin: 0, aqiMax: 25 },
+                { min: 15.1, max: 25, aqiMin: 26, aqiMax: 50 },
+                { min: 25.1, max: 37.5, aqiMin: 51, aqiMax: 100 },
+                { min: 37.6, max: 75, aqiMin: 101, aqiMax: 200 },
+                { min: 75.1, max: 500, aqiMin: 201, aqiMax: 500 }
+            ];
+            let range = ranges.find(r => Ci >= r.min && Ci <= r.max);
+            return Math.round(((range.aqiMax - range.aqiMin) / (range.max - range.min)) * (Ci - range.min) + range.aqiMin);
+        }
+    </script>
+</body>
+</html>
