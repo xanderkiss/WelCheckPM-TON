@@ -17,6 +17,13 @@
         .container {
             max-width: 450px;
             margin: 20px auto;
+            text-align: center;
+        }
+        header .row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
         }
         .btn-health-check {
             display: block;
@@ -29,36 +36,40 @@
             border-radius: 5px;
             font-size: 1.2em;
             cursor: pointer;
-            text-align: center;
         }
         .btn-health-check:hover {
             background-color: #0056b3;
+        }
+        #pm-widget {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #pm-aqi {
+            font-size: 4rem; /* ขนาดข้อความ (เปลี่ยนตามต้องการ) */
+        }
+        .col {
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="container border rounded shadow">
         <header>
-            <div class="row rounded-top" style="background-color: #eee;">
-                <div class="col-7">
-                    <h3 class="fs-4 mt-2">รายงานคุณภาพอากาศ</h3>
-                </div>
-                <div class="col-2"><img src="" id="aqi-icon" alt="" width="50"></div>
-                <div class="col-3">
-                    <h2 id="aqi-value" class="mt-1"></h2>
+            <div class="row py-3">
+                <div class="col text-center">
+                    <h3 class="fs-4">รายงานคุณภาพอากาศ</h3>
                 </div>
             </div>
         </header>
         <section>
-            <div class="row justify-content-start rounded-top rounded-4 p-2" id="pm-widget" style="background-color: rgb(0, 166, 81);">
-                <div class="col-3 text-center">
-                    <img src="https://xanderkiss.github.io/TSM-Blood-Pressure-Checker-TON/logo.png" width="65" alt="green" id="aqi-image" class="bg-white rounded-circle p-1 mt-2">
-                </div>
-                <div class="col-3 text-center">
-                    <h2 id="pm-aqi" class="fw-semibold fs-1 text-white">50</h2>
+            <div class="row rounded-top rounded-4 p-3" id="pm-widget" style="background-color: rgb(0, 166, 81);">
+                <div class="col">
+                    <h2 id="pm-aqi" class="fw-semibold text-white">50</h2>
                     <h3 class="fs-5 text-white">AQI</h3>
                 </div>
-                <div class="col text-center">
+                <div class="col">
                     <p id="pm-text" class="text-white">คุณภาพอากาศดี</p>
                     <span class="badge text-bg-light fs-6" id="pm-level">PM 2.5 | 25 µg/m³</span>
                 </div>
